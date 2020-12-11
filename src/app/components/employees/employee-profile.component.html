@@ -1,0 +1,58 @@
+<div class="row my-3" *ngIf="!id" >
+  <div class="form-group mb-2">
+    <label class="">ID:</label>
+  </div>
+  <div class="form-group mx-sm-3 mb-2">
+    <input type="text" class="form-control" #txtId (keyup.enter)="searchEmployeeById(txtId.value)">
+  </div>
+  <button type="button" class="btn btn-primary mb-2" (click)="searchEmployeeById(txtId.value)">Buscar</button>
+</div>
+
+<div class="row my-3" *ngIf="id">
+    <h3>Perfil del empleado con ID: <small>{{ id }}</small></h3>
+</div>
+
+<table *ngIf="employee" class="table">
+    
+      <tr>
+        <td>Nombre</td>
+        <td>{{ employee.firstName }}</td>
+      </tr>
+
+      <tr>
+        <td>Apellido</td>
+        <td>{{ employee.lastName }}</td>
+      </tr>
+
+      <tr>
+        <td>Fecha Ingreso</td>
+        <td>{{ employee.hireDate }}</td>
+      </tr>
+
+      <tr>
+        <td>email</td>
+        <td>{{ employee.email }}</td>
+      </tr>
+
+      <tr>
+        <td>Región</td>
+        <td>{{ employee.region.name }}</td>
+      </tr>
+
+      <tr>
+        <td>Salario</td>
+        <td>{{ employee.salary }}</td>
+      </tr>
+
+      <tr>
+        <td>Comisión</td>
+        <td>{{ employee.commissionPCT }}</td>
+      </tr>
+
+      <tr>
+        <td>Departamento</td>
+        <td>{{ employee.department.name }}</td>
+      </tr>
+    
+  </table>
+  

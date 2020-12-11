@@ -1,0 +1,28 @@
+<div class="d-inline">
+    <!--ir al inicio-->
+    <a class="btn btn-light" [routerLink]="['/employees/list', 1]" [ngClass]="{'disabled': currentPage == 1}">
+        <img src="/assets/images/icons/first-2x.png">
+    </a>
+
+    <!--ir al enterior-->
+    <a class="btn btn-light" [routerLink]="['/employees/list', (currentPage - 1)]" 
+        [ngClass]="{'disabled': currentPage == 1}">
+        <img src="/assets/images/icons/prev-2x.png">
+    </a>
+
+    <!--resto de botones-->
+    <a *ngFor="let page of pages" class="btn mr-1" 
+        [routerLink]="['/employees/list', page]" [ngClass]="page==currentPage ? 'btn-info': 'btn-light'">{{ page }}</a>
+    
+    <!--ir al siguiente-->
+    <a class="btn btn-light" [routerLink]="['/employees/list', (currentPage + 1)]" 
+        [ngClass]="{'disabled': currentPage == totalPages}">
+        <img src="/assets/images/icons/next-2x.png">
+    </a>
+
+    <!--ir al ultimo-->
+    <a class="btn btn-light" [routerLink]="['/employees/list', totalPages]" 
+        [ngClass]="{'disabled': currentPage == totalPages}">
+        <img src="/assets/images/icons/last-2x.png">
+    </a>
+</div>

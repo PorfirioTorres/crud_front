@@ -1,0 +1,13 @@
+.img-socialn {
+    width: 100px;
+    height:100px;
+}
+
+.img-container {
+    background-color: #eeeeee;
+    padding: 3%;
+}
+
+.img-container:hover {
+    background-color: #b0c4de;
+}

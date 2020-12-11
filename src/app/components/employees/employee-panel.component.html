@@ -1,0 +1,14 @@
+<div class="row text-right">
+
+    <div class="col-lg-12 col-md-12">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-info mr-1" [routerLink]="['list', 1]" routerLinkActive="active" >List</button>
+            <button type="button" class="btn btn-info mr-1" [routerLink]="['add']" routerLinkActive="active" >+ Employee</button>
+            <button type="button" class="btn btn-info mr-1" [routerLink]="['edit']" routerLinkActive="active" >Edit</button>
+            <button type="button" class="btn btn-info" [routerLink]="['profile']" routerLinkActive="active" >Profile</button>
+        </div>
+    </div>
+</div>
+
+
+<router-outlet></router-outlet>

@@ -5,7 +5,8 @@
   <div class="form-group mx-sm-3 mb-2">
     <input type="text" class="form-control" #txtId (keyup.enter)="searchEmployeeById(txtId.value)">
   </div>
-  <button type="button" class="btn btn-primary mb-2" (click)="searchEmployeeById(txtId.value)">Buscar</button>
+  <!---->
+ <button type="button" class="btn btn-primary mb-2" (click)="searchEmployeeById(txtId.value)">Buscar</button>
 </div>
 
 <div class="row my-3" *ngIf="id">
@@ -13,46 +14,51 @@
 </div>
 
 <table *ngIf="employee" class="table">
-    
+    <tbody>
       <tr>
         <td>Nombre</td>
-        <td>{{ employee.firstName }}</td>
+        <td><strong>{{ employee?.firstName }}</strong> </td>
       </tr>
 
-      <tr>
+      <tr *ngIf="employee.lastName">
         <td>Apellido</td>
-        <td>{{ employee.lastName }}</td>
+        <td><strong>{{ employee.lastName }}</strong></td>
       </tr>
 
       <tr>
         <td>Fecha Ingreso</td>
-        <td>{{ employee.hireDate }}</td>
+        <td><strong>{{ employee.hireDate | date:"dd/MM/yyyy" }}</strong></td>
       </tr>
 
       <tr>
         <td>email</td>
-        <td>{{ employee.email }}</td>
+        <td><strong>{{ employee.email }}</strong></td>
       </tr>
 
       <tr>
         <td>Región</td>
-        <td>{{ employee.region.name }}</td>
+        <td><strong>{{ employee.region.name }}</strong></td>
       </tr>
 
       <tr>
         <td>Salario</td>
-        <td>{{ employee.salary }}</td>
+        <td><strong>{{ employee.salary }}</strong></td>
       </tr>
 
       <tr>
         <td>Comisión</td>
-        <td>{{ employee.commissionPCT }}</td>
+        <td><strong>{{ employee.commissionPCT }}</strong></td>
       </tr>
 
       <tr>
         <td>Departamento</td>
-        <td>{{ employee.department.name }}</td>
+        <td><strong>{{ employee.department.name }}</strong></td>
       </tr>
-    
+   
+    </tbody>
   </table>
+  <button type="button" class="btn btn-outline btn-primary btn-block" 
+  (click)="getVacationPerception()" [disabled]="!employee">
+    Calcular pago vacacional
+  </button>
   

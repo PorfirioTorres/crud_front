@@ -2,64 +2,125 @@
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Nombre</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" formControlName="firstName">
+        <input type="text" class="form-control" 
+          formControlName="firstName"
+          [class.is-invalid]="validateFName"
+        >
+        <small *ngIf="validateFName" 
+          class="form-text text-danger">Ingrese un nombre válido
+        </small>
       </div>
     </div>
 
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">Apellido</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" formControlName="lastName">
+        <input type="text" class="form-control" 
+          formControlName="lastName"
+          [class.is-invalid]="validateLName"
+        >
+        <small *ngIf="validateLName" 
+          class="form-text text-danger">Ingrese un apellido válido
+        </small>
       </div>
     </div>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Ingreso</label>
         <div class="col-sm-10">
-          <input type="date" class="form-control" formControlName="hireDate">
+          <input type="date" class="form-control" 
+            formControlName="hireDate"
+            [class.is-invalid]="validateHireDate"
+          >
+          <small *ngIf="validateHireDate" 
+            class="form-text text-danger">Ingrese una fecha válida
+          </small>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">email</label>
         <div class="col-sm-10">
-          <input type="email" class="form-control" formControlName="email">
+          <input type="email" class="form-control" 
+            formControlName="email"
+            [class.is-invalid]="validateEmail || exists"
+          >
+          <small *ngIf="validateEmail" 
+            class="form-text text-danger">Ingrese un email válido
+          </small>
+          <small *ngIf="exists" 
+            class="form-text text-danger">El email ya esta registrado con otra cuenta
+          </small>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Región</label>
-        <select class="form-control" formControlName="region">
+        <select [disabled]="regions?.length === 0" class="form-control" 
+          formControlName="region"
+          [class.is-invalid]="validateRegion">
           <option value=""></option>
-          <!--cargar regiones-->
+          <option *ngFor="let region of regions" [value]="region.regionId">{{ region.name }}</option>
         </select>
+        <small *ngIf="validateRegion" 
+          class="form-text text-danger">Ingrese una región válida
+        </small>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Salario</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" formControlName="salary">
+          <input type="text" class="form-control" 
+            formControlName="salary"
+            [class.is-invalid]="validateSalary"
+          >
+          <small *ngIf="validateSalary" 
+            class="form-text text-danger">Ingrese un salario válido
+          </small>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Comisión</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" formControlName="commission">
+          <input type="text" class="form-control" 
+            formControlName="commission"
+            [class.is-invalid]="validateCommission"
+          >
+          <small *ngIf="validateCommission" 
+            class="form-text text-danger">Ingrese una comisión válida
+          </small>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Departamento</label>
-        <select class="form-control" formControlName="department">
+        <select [disabled]="departments?.length === 0" class="form-control" 
+          formControlName="department"
+          [class.is-invalid]="validateDepartment">
           <option value=""></option>
+          <option *ngFor="let department of departments" [value]="department.departmentId">{{ department.name }}</option>
         </select>
+        <small *ngIf="validateDepartment" 
+          class="form-text text-danger">Ingrese un departamento válido
+        </small>
         
       </div>
 
       <div class="form-group row">
         <div class="col-sm-10">
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="submit" class="btn btn-primary"
+          [disabled]="formu.invalid">Guardar</button>
         </div>
       </div>
   </form>
+
+  <hr>
+<pre>
+  Estado del formulario: {{ formu.valid }}
+  <br>
+  Estatus: {{ formu.status }}
+</pre>
+<pre>
+  {{ formu.value | json }}
+</pre>

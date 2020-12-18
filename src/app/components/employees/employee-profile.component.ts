@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Validations } from '../../utils/Validations';
+import { Util } from '../../utils/util';
 import { Employee } from '../../models/Employee';
+import Swal from 'sweetalert2';
+import { EmployeeService } from '../../services/employee.service';
 
 @Component({
   selector: 'app-employee-profile',
@@ -12,7 +15,8 @@ export class EmployeeProfileComponent implements OnInit {
   public employee: Employee;
   private validations: Validations;
 
-  constructor(private activatedRoute: ActivatedRoute) {
+  constructor(private activatedRoute: ActivatedRoute, private employeeService: EmployeeService,
+              private router: Router) {
     this.validations = new Validations();
    }
 
@@ -20,23 +24,61 @@ export class EmployeeProfileComponent implements OnInit {
     this.activatedRoute.params.subscribe(
       params => {
         if (params.id) {
-          this.searchEmployeeById(params.id);
+          // this.searchEmployeeById(params.id);
+          const id = params.id.trim();
+          if (this.validations.validateNumber(id)) { // validar id
+            this.id = Number(id);
+            this.findEmployee();
+          } else {
+            this.id = undefined;
+            this.employee = undefined;
+            // id no valido enviar mensaje de error
+            Swal.fire('Error', 'id de empleado no válido', 'error');
+          }
         }
       }
     );
   }
 
   public searchEmployeeById(id: string): void {
-    id = id.trim();
-    if (this.validations.validateNumber(id)) { // validar id
-      this.id = Number(id);
-      this.findEmployee();
-    } else {
-      this.id = undefined;
-      this.employee = undefined;
-      // id no valido enviar mensaje de error
-    }
+    this.router.navigate(['/employees/profile', id]);
   }
 
-  private findEmployee(): void {}
+  private findEmployee(): void {
+    this.employeeService.getEmployee(this.id).subscribe(
+      resp => {
+        this.employee = resp;
+      },
+      err => {
+        this.id = undefined;
+        this.employee = undefined;
+        if (err.status === 500) {
+          Swal.fire('Error', err.error.message, 'error');
+        } else {
+          Swal.fire('Sin resultados', err.error.message, 'warning');
+        }
+      }
+    );
+  }
+
+  public getVacationPerception(): void {
+    Util.showLoading();
+    this.employeeService.calculateVacationalPercept(this.employee).subscribe(
+      resp => {
+        const bono = (Math.round(resp.bonus * 100) / 100).toFixed(2);
+        const total = (Math.round(resp.total * 100) / 100).toFixed(2);
+        const perceptions = `
+        <p> No. días: ${resp.days}</p>
+        <p> Bono: $ ${bono}</p>
+        <p> Total perception: $ ${total}</p>
+        `;
+        Swal.close();
+        Swal.fire('información', perceptions, 'success');
+      },
+      err => {
+        Swal.close();
+        Swal.fire('Ocurrió un error', err.error.message, 'error');
+      }
+    );
+  }
 }

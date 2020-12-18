@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Employee } from '../../models/Employee';
 import { Validations } from '../../utils/Validations';
+import { Util } from '../../utils/util';
+import Swal from 'sweetalert2';
+import { EmployeeService } from '../../services/employee.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -13,12 +16,12 @@ export class EmployeeListComponent implements OnInit {
   public numPage: number;
   public totalPages: number;
 
-  constructor(private activatedRoute: ActivatedRoute) {
+  constructor(private activatedRoute: ActivatedRoute, private employeeService: EmployeeService) {
     this.validations = new Validations();
-    this.totalPages = 7;
    }
 
   ngOnInit(): void {
+    Util.showLoading();
     this.activatedRoute.params.subscribe(
       params => {
         if (params.page) {
@@ -29,6 +32,7 @@ export class EmployeeListComponent implements OnInit {
           } else {
             this.numPage = undefined;
             // el parametro no es valido, mostrar error
+            Swal.fire('Error', 'Número de página no válido', 'error');
           }
         }
       }
@@ -36,11 +40,49 @@ export class EmployeeListComponent implements OnInit {
   }
 
   private getEmployees(page: number): void {
-    // ir al service por los datos
+    this.employeeService.getEmployeesPage(page).subscribe(
+      (result: any) => {
+        this.employees = result.paginate.elements;
+        this.totalPages = result.paginate.totalPages;
+        Swal.close();
+      },
+      err => {
+        Swal.close();
+        if (err.status === 500) {
+          Swal.fire('Error', err.error.message, 'error');
+        } else {
+          Swal.fire('Sin resultados', err.error.message, 'warning');
+        }
+      }
+    );
   }
 
   public delEmployee(id: number): void {
-
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Eliminar al empleado: ${id}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.employeeService.deleteEmployee(id).subscribe(
+          response => {
+            this.employees = this.employees.filter(emp => emp.employeeId !== id);
+            Swal.fire(
+              'Empleado eliminado!',
+              'El empleado ha sido eliminado.',
+              'success'
+            );
+          },
+          e => {
+            Swal.fire('Error', e.error.message, 'error');
+          }
+        );
+      }
+    });
   }
 
 }

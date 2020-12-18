@@ -7,7 +7,7 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./paginate.component.css']
 })
 export class PaginateComponent implements OnInit, OnChanges {
-  @Input() totalPages: number; // recibo el numero de pagina actual
+  @Input() totalPages: number; // recibo el numero total de paginas
   @Input() currentPage: number; // recibo el numero de pagina actual
   public pages: number[];
   public from: number;

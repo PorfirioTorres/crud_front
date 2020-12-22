@@ -24,7 +24,6 @@ export class EmployeeProfileComponent implements OnInit {
     this.activatedRoute.params.subscribe(
       params => {
         if (params.id) {
-          // this.searchEmployeeById(params.id);
           const id = params.id.trim();
           if (this.validations.validateNumber(id)) { // validar id
             this.id = Number(id);

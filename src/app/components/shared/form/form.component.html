@@ -115,17 +115,7 @@
       <div class="form-group row">
         <div class="col-sm-10">
           <button type="submit" class="btn btn-primary"
-          >Guardar</button>
+          [disabled]="formu.invalid">Guardar</button>
         </div>
       </div>
   </form>
-
-  <hr>
-<pre>
-  Estado del formulario: {{ formu.valid }}
-  <br>
-  Estatus: {{ formu.status }}
-</pre>
-<pre>
-  {{ formu.value | json }}
-</pre>

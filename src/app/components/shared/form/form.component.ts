@@ -6,6 +6,7 @@ import { AlreadyExists, ValidateService } from '../../../services/validate.servi
 import { Region } from '../../../models/Region';
 import { Department } from '../../../models/Department';
 import Swal from 'sweetalert2';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-form',
@@ -26,9 +27,11 @@ export class FormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.employee) {
+    if (this.employee.employeeId) {
       this.action = 'update';
       this.asycValueEmail = this.employee.email;
+      const datePipe = new DatePipe('es-MX');
+      this.employee.hireDate = datePipe.transform(this.employee.hireDate, 'yyyy-MM-dd');
     } else {
       this.action = 'save';
     }
@@ -58,7 +61,7 @@ export class FormComponent implements OnInit {
     this.formu = this.formBuilder.group({
       firstName: [this.employee.firstName, [Validators.required]],
       lastName: [this.employee.lastName, [Validators.required]],
-      hireDate: [this.employee.hireDate.slice(0, 10), [Validators.required]],
+      hireDate: [this.employee.hireDate, [Validators.required]],
       email: [this.employee.email,
               [
                 Validators.required,
@@ -180,10 +183,10 @@ export class FormComponent implements OnInit {
 /////////////////////////////////////////////////////////////////////////////////////////////
 ///////// setear valores a los select con los valores del objeto
   public compareRegion(r1: Region, r2: Region): boolean {
-    if (r1 === undefined && r2 === undefined) {
-       return true;
+    if (r1  && r2) {
+      return true;
     }
-    if (r1 === undefined || r2 === undefined) {
+    if (r1 || r2) {
       return false;
     } else {
       return r1.regionId === r2.regionId;
@@ -191,10 +194,10 @@ export class FormComponent implements OnInit {
   }
 
   public compareDepartment(d1: Department, d2: Department): boolean {
-    if (d1 === undefined && d2 === undefined) {
-       return true;
+    if (d1 && d2) {
+      return true;
     }
-    if (d1 === undefined || d2 === undefined) {
+    if (d1 || d2) {
       return false;
     } else {
       return d1.departmentId === d2.departmentId;

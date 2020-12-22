@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Employee } from '../../models/Employee';
 import { Validations } from '../../utils/validations';
 import Swal from 'sweetalert2';
@@ -14,7 +14,8 @@ export class EmployeeEditComponent implements OnInit {
   public employee: Employee;
   private validations: Validations;
 
-  constructor(private activatedRoute: ActivatedRoute, private employeeService: EmployeeService) {
+  constructor(private activatedRoute: ActivatedRoute, private employeeService: EmployeeService,
+              private router: Router) {
     this.validations = new Validations();
   }
 
@@ -22,24 +23,27 @@ export class EmployeeEditComponent implements OnInit {
     this.activatedRoute.params.subscribe(
       params => {
         if (params.id) {
-          this.searchEmployeeById(params.id);
+          const id = params.id.trim();
+          if (this.validations.validateNumber(id)) { // validar id
+            this.id = Number(id);
+            this.findEmployee();
+          } else {
+            this.id = undefined;
+            this.employee = undefined;
+            // id no valido enviar mensaje de error
+            Swal.fire('Error', 'id de empleado no válido', 'error');
+          }
         }
       }
     );
   }
 
-  public searchEmployeeById(id: string): void {
-    id = id.trim();
 
-    if (this.validations.validateNumber(id)) { // validar id
-      this.id = Number(id);
-      this.findEmployee();
-    } else {
-      this.id = undefined;
-      this.employee = undefined;
-      // id no valido enviar mensaje de error
-      Swal.fire('Error', 'id de empleado no válido', 'error');
+  public searchEmployeeById(id: string): void {
+    if (id.trim().length === 0) {
+      return;
     }
+    this.router.navigate(['/employees/edit', id]);
   }
 
   private findEmployee(): void {

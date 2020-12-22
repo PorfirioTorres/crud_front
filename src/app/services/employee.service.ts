@@ -19,13 +19,13 @@ export class EmployeeService {
   }
 
   public getRegions(): Observable<Region[]> {
-    return this.httpClient.get('http://localhost/regions/all').pipe(
+    return this.httpClient.get('http://localhost:8080/regions/all').pipe(
       map((resp: any) => resp.regions as Region[])
     );
   }
 
   public getDepartments(): Observable<Department[]> {
-    return this.httpClient.get('http://localhost/departments/all').pipe(
+    return this.httpClient.get('http://localhost:8080/departments/all').pipe(
       map((resp: any) => resp.departments as Department[])
     );
   }

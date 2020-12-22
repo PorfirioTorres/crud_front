@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validations } from '../../utils/Validations';
+import { Validations } from '../../utils/validations';
 import { Util } from '../../utils/util';
 import { Employee } from '../../models/Employee';
 import Swal from 'sweetalert2';
@@ -18,7 +18,7 @@ export class EmployeeProfileComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute, private employeeService: EmployeeService,
               private router: Router) {
     this.validations = new Validations();
-   }
+  }
 
    ngOnInit(): void {
     this.activatedRoute.params.subscribe(
@@ -41,6 +41,9 @@ export class EmployeeProfileComponent implements OnInit {
   }
 
   public searchEmployeeById(id: string): void {
+    if (id.trim().length === 0) {
+      return;
+    }
     this.router.navigate(['/employees/profile', id]);
   }
 
@@ -68,9 +71,9 @@ export class EmployeeProfileComponent implements OnInit {
         const bono = (Math.round(resp.bonus * 100) / 100).toFixed(2);
         const total = (Math.round(resp.total * 100) / 100).toFixed(2);
         const perceptions = `
-        <p> No. días: ${resp.days}</p>
-        <p> Bono: $ ${bono}</p>
-        <p> Total perception: $ ${total}</p>
+        <p> No. días: <strong>${resp.days}</strong></p>
+        <p> Bono: <strong>$ ${bono}</strong></p>
+        <p> Total perception: <strong>$ ${total}</strong></p>
         `;
         Swal.close();
         Swal.fire('información', perceptions, 'success');

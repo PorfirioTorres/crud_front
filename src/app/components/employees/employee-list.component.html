@@ -21,7 +21,7 @@
         <td>{{ employee.firstName }} {{ employee.lastName }}</td>
         <td>{{ employee.department.name }}</td>
         <td>
-            <a [routerLink]="['edit', employee.employeeId]" class="btn btn-sm btn-outline btn-info mr-1">
+            <a [routerLink]="['/employees/edit', employee.employeeId]" class="btn btn-sm btn-outline btn-info mr-1">
                 <img src="/assets/images/icons/pencil-2x.png" alt="Editar">
             </a>
             

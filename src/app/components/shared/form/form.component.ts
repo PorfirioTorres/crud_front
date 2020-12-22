@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Employee } from '../../../models/Employee';
-import { combineLatest } from 'rxjs';
 import { EmployeeService } from '../../../services/employee.service';
-import { ValidateService } from '../../../services/validate.service';
+import { AlreadyExists, ValidateService } from '../../../services/validate.service';
 import { Region } from '../../../models/Region';
 import { Department } from '../../../models/Department';
 import Swal from 'sweetalert2';
@@ -16,35 +15,40 @@ import Swal from 'sweetalert2';
 export class FormComponent implements OnInit {
   @Input() employee: Employee;
   public formu: FormGroup;
-  private formBuilder: FormBuilder;
   private action: string;
+  private asycValueEmail: string;
 
   public regions: Region[];
   public departments: Department[];
 
-  constructor(private employeeService: EmployeeService, private validateService: ValidateService) {
-    this.loadComponents();
-    this.listenValuesChanges();
+  constructor(private formBuilder: FormBuilder, private employeeService: EmployeeService,
+              private validateService: ValidateService) {
   }
 
   ngOnInit(): void {
     if (this.employee) {
       this.action = 'update';
+      this.asycValueEmail = this.employee.email;
     } else {
       this.action = 'save';
     }
 
-    combineLatest([
-      this.employeeService.getRegions(),
-      this.employeeService.getDepartments()
-
-    ]).subscribe(
-      ([regions, departments]) => {
-        this.regions = regions;
-        this.departments = departments;
+    // cargar los componentes del formulario
+    this.loadComponents();
+    this.listenValuesChanges();
+    this.employeeService.getRegions().subscribe(
+      resp => {
+        this.regions = resp;
+        this.employeeService.getDepartments().subscribe(
+          result => {
+            this.departments = result;
+          },
+          err => {
+            Swal.fire('Ha ocurrido un error', err.error.message, 'error');
+          }
+        );
       },
       err => {
-        console.log(err);
         Swal.fire('Ha ocurrido un error', err.error.message, 'error');
       }
     );
@@ -54,13 +58,13 @@ export class FormComponent implements OnInit {
     this.formu = this.formBuilder.group({
       firstName: [this.employee.firstName, [Validators.required]],
       lastName: [this.employee.lastName, [Validators.required]],
-      hireDate: [this.employee.hireDate, [Validators.required]],
+      hireDate: [this.employee.hireDate.slice(0, 10), [Validators.required]],
       email: [this.employee.email,
               [
                 Validators.required,
                 Validators.pattern('^([A-Za-z]+)([0-9]+)?([A-Za-z0-9\.\_]+)?\@(([A-Za-z]+)([0-9]+)?([A-Za-z0-9\.\_]+)?)((\.)([a-zA-Z]+))$')
               ],
-              [this.validateService.validateEmailExists]
+              [this.validateEmailExists]
             ],
       region: [this.employee.region, [Validators.required]],
       salary: [this.employee.salary,
@@ -77,6 +81,7 @@ export class FormComponent implements OnInit {
                   ],
       department: [this.employee.department, [Validators.required]]
     });
+
   }
 
   private listenValuesChanges(): void {
@@ -157,15 +162,56 @@ export class FormComponent implements OnInit {
     return this.formu.get('email').getError('exists');
   }
 ///////////////////////////////////////////////////////////////////////////////////////////////
+//////// validar si el email ya existe
+  public validateEmailExists = (control: FormControl): Promise<AlreadyExists> => {
+    if (control.value === this.asycValueEmail || !control.value) {
+      // email sin cambios, no vamos al servicio;
+      return new Promise((resolve, reject) => {
+        resolve(null);
+      });
+    }
+    let id = this.employee.employeeId;
 
+    if (!id) {
+      id = 0;
+    }
+    return this.validateService.validateEmailExists(control.value, id);
+  }
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////// setear valores a los select con los valores del objeto
+  public compareRegion(r1: Region, r2: Region): boolean {
+    if (r1 === undefined && r2 === undefined) {
+       return true;
+    }
+    if (r1 === undefined || r2 === undefined) {
+      return false;
+    } else {
+      return r1.regionId === r2.regionId;
+    }
+  }
+
+  public compareDepartment(d1: Department, d2: Department): boolean {
+    if (d1 === undefined && d2 === undefined) {
+       return true;
+    }
+    if (d1 === undefined || d2 === undefined) {
+      return false;
+    } else {
+      return d1.departmentId === d2.departmentId;
+    }
+  }
+////////////////////////////////////////////////////////////////////////////////////////////
   public save(): void {
     if (this.formu.valid) {
       // formulario valido ir al servicio
+      // console.log(this.formu.controls);
+
       console.log(this.formu.controls);
       if (this.action === 'save') {
         console.log('guardar');
         this.employeeService.saveEmployee(this.employee).subscribe(
           resp => {
+            this.employee.employeeId = resp.id;
             Swal.fire('Éxito', resp.success, 'success');
           },
           err => {

@@ -56,15 +56,18 @@
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Región</label>
-        <select [disabled]="regions?.length === 0" class="form-control" 
-          formControlName="region"
-          [class.is-invalid]="validateRegion">
-          <option value=""></option>
-          <option *ngFor="let region of regions" [value]="region.regionId">{{ region.name }}</option>
-        </select>
-        <small *ngIf="validateRegion" 
-          class="form-text text-danger">Ingrese una región válida
-        </small>
+        <div class="col-8">
+          <select class="form-control" 
+            formControlName="region"
+            [compareWith]="compareRegion"
+            [class.is-invalid]="validateRegion">
+            <option value=""></option>
+            <option *ngFor="let region of regions" [ngValue]="region">{{ region.name }}</option>
+          </select>
+          <small *ngIf="validateRegion" 
+            class="form-text text-danger">Ingrese una región válida
+          </small>
+        </div>
       </div>
 
       <div class="form-group row">
@@ -95,22 +98,24 @@
 
       <div class="form-group row">
         <label class="col-sm-2 col-form-label">Departamento</label>
-        <select [disabled]="departments?.length === 0" class="form-control" 
-          formControlName="department"
-          [class.is-invalid]="validateDepartment">
-          <option value=""></option>
-          <option *ngFor="let department of departments" [value]="department.departmentId">{{ department.name }}</option>
-        </select>
-        <small *ngIf="validateDepartment" 
-          class="form-text text-danger">Ingrese un departamento válido
-        </small>
-        
+        <div class="col-8">
+          <select class="form-control" 
+            formControlName="department"
+            [compareWith]="compareDepartment"
+            [class.is-invalid]="validateDepartment">
+            <option value=""></option>
+            <option *ngFor="let department of departments" [ngValue]="department">{{ department.name }}</option>
+          </select>
+          <small *ngIf="validateDepartment" 
+            class="form-text text-danger">Ingrese un departamento válido
+          </small>
+        </div>
       </div>
 
       <div class="form-group row">
         <div class="col-sm-10">
           <button type="submit" class="btn btn-primary"
-          [disabled]="formu.invalid">Guardar</button>
+          >Guardar</button>
         </div>
       </div>
   </form>

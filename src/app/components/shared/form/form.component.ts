@@ -17,7 +17,7 @@ export class FormComponent implements OnInit {
   @Input() employee: Employee;
   public formu: FormGroup;
   private action: string;
-  private asycValueEmail: string;
+  private asyncValueEmail: string;
 
   public regions: Region[];
   public departments: Department[];
@@ -29,7 +29,7 @@ export class FormComponent implements OnInit {
   ngOnInit(): void {
     if (this.employee.employeeId) {
       this.action = 'update';
-      this.asycValueEmail = this.employee.email;
+      this.asyncValueEmail = this.employee.email;
       const datePipe = new DatePipe('es-MX');
       this.employee.hireDate = datePipe.transform(this.employee.hireDate, 'yyyy-MM-dd');
     } else {
@@ -167,7 +167,7 @@ export class FormComponent implements OnInit {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //////// validar si el email ya existe
   public validateEmailExists = (control: FormControl): Promise<AlreadyExists> => {
-    if (control.value === this.asycValueEmail || !control.value) {
+    if (control.value === this.asyncValueEmail || !control.value) {
       // email sin cambios, no vamos al servicio;
       return new Promise((resolve, reject) => {
         resolve(null);
@@ -215,6 +215,7 @@ export class FormComponent implements OnInit {
         this.employeeService.saveEmployee(this.employee).subscribe(
           resp => {
             this.employee.employeeId = resp.id;
+            this.asyncValueEmail = this.employee.email;
             Swal.fire('Éxito', resp.success, 'success');
           },
           err => {
@@ -225,6 +226,7 @@ export class FormComponent implements OnInit {
         console.log('actualizar');
         this.employeeService.updateEmployee(this.employee).subscribe(
           resp => {
+            this.asyncValueEmail = this.employee.email;
             Swal.fire('Éxito', resp.success, 'success');
           },
           err => {

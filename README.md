@@ -1,5 +1,7 @@
 # Crudemployees
 
+Es un cliente que consume un API REST que gestiona una tabla de usuarios. Incluye rutas hijas, formularios reactivos y validaciones asincronas.
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.7.
 
 ## Development server
